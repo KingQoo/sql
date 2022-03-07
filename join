@@ -1,0 +1,27 @@
+Sub Sql()
+  Dim cn As ADODB.Connection
+  Dim rs As ADODB.Recordset
+  Dim File_Name, Sql As String
+  Dim CurRow As Integer
+    File_Name = ThisWorkbook.FullName
+    CurRow = 1
+    Set cn = New ADODB.Connection
+    Set rs = New ADODB.Recordset
+    cn.Provider = "MSDASQL"
+    cn.ConnectionString = "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};" & "DBQ=" & File_Name & "; ReadOnly=True;"
+    cn.Open
+    'Sql = "SELECT name,date,hr FROM [Sheet1$] WHERE name='越後屋' "
+    Sql = "SELECT T.name,M.kana,M.alpha FROM  [Sheet1$] T LEFT JOIN  [Sheet3$] M ON T.name = M.name"
+    rs.Open Sql, cn, adOpenStatic
+    Do Until rs.EOF
+    Sheets("Sheet4").Cells(CurRow, 1).Value = rs!Name
+    Sheets("Sheet4").Cells(CurRow, 2).Value = rs!kana
+    Sheets("Sheet4").Cells(CurRow, 3).Value = rs!alpha
+    rs.MoveNext
+    CurRow = CurRow + 1
+    Loop
+    rs.Close
+    cn.Close
+  Set rs = Nothing
+  Set cn = Nothing
+End Sub
